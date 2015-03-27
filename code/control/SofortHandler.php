@@ -81,7 +81,9 @@ class SofortHandler extends PaymentHandler {
              * we more easily edit orders.
              */
             if(class_exists("Order")) {
-                $order_object = Order::get()->filter("OrderNumber", $data["OrderNumber"]);
+                $order_object = Order::get()
+                    ->filter("OrderNumber", $data["OrderNumber"])
+                    ->first();
                 $order_object->PaymentNo = $sofort->getTransactionId();
                 $order_object->write();
             }
