@@ -76,8 +76,15 @@ class SofortHandler extends PaymentHandler {
             
             $form->setFormAction($sofort->getPaymentUrl());
             
-            $order->PaymentNo = $sofort->getTransactionId();
-            $order->write();
+            /**
+             * @todo remove this and rewrite the payment process so that
+             * we more easily edit orders.
+             */
+            if(class_exists("Order")) {
+                $order_object = Order::get()->filter("OrderNumber", $data["OrderNumber"]);
+                $order_object->PaymentNo = $sofort->getTransactionId();
+                $order_object->write();
+            }
         } else {
             $actions->add(LiteralField::create(
                 'BackButton',
