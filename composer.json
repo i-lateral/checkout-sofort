@@ -1,0 +1,28 @@
+{
+  "name": "i-lateral/silverstripe-checkout-sofort",
+  "description": "Silverstripe module that add's Sofort payment integration to the checkout module",
+    "type": "silverstripe-module",
+    "homepage": "http://github.com/i-lateral/silverstripe-checkout-sofort",
+    "keywords": ["silverstripe", "commerce", "ecommerce", "checkout", "shopping", "cart", "sofort"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Morven Lewis-Everley",
+            "email": "morven@i-lateral.com"
+        }
+    ],
+    "support": {
+        "issues": "http://github.com/i-lateral/silverstripe-checkout-sofort/issues"
+    },
+    "require": {
+        "silverstripe/framework": ">=3.1",
+        "i-lateral/silverstripe-checkout": "*"
+    },
+    "suggest": {
+        "silverstripe/cms": "Add full content management support to your site",
+        "i-lateral/silverstripe-siteconfig": "Add site settings support"
+    },
+    "extra": {
+        "installer-name": "checkout-sofort"
+    }
+}
