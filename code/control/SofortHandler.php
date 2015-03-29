@@ -118,9 +118,10 @@ class SofortHandler extends PaymentHandler {
         // Check if CallBack data exists and install id matches the saved ID
         if(isset($content)) {
             $notification = new SofortLibNotification();
+            $transaction_id = $notification->getNotification($content);
 
             $sofort = new SofortLibTransactionData($key);
-            $sofort->addTransaction($notification->getNotification($content));
+            $sofort->addTransaction($transaction_id);
             $sofort->sendRequest();
             
             switch($sofort->getStatus()) {
@@ -150,7 +151,7 @@ class SofortHandler extends PaymentHandler {
                     ->filter("PaymentNo", $notification->getTransactionId())
                     ->first();
                     
-                $return["OrderID"] = $order->ID;
+                $return["OrderID"] = $order->OrderNumber;
             }
             
             return $return;
