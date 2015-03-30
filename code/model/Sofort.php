@@ -5,6 +5,8 @@ class Sofort extends PaymentMethod {
     public static $handler = "SofortHandler";
 
     public $Title = 'Sofort';
+    
+    public $Icon = 'checkout-sofort/images/sofort-small.png';
 
     private static $db = array(
         "ProjectID" => "Varchar(99)",
