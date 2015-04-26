@@ -2,10 +2,12 @@
 
 class SofortHandler extends PaymentHandler {
 
-    public function index() {
+    public function index($request) {
+        
+        $this->extend('onBeforeIndex');
+        
         $site = SiteConfig::current_site_config();
-        $data = $this->order_data;
-        $order = ArrayData::create($data);
+        $order = $this->getOrderData();
         $cart = ShoppingCart::get();
         $key = $this->payment_gateway->ConfigKey;
         
@@ -76,39 +78,40 @@ class SofortHandler extends PaymentHandler {
             
             $form->setFormAction($sofort->getPaymentUrl());
             
-            /**
-             * @todo remove this and rewrite the payment process so that
-             * we more easily edit orders.
-             */
-            if(class_exists("Order")) {
-                $order_object = Order::get()
-                    ->filter("OrderNumber", $data["OrderNumber"])
-                    ->first();
-                $order_object->PaymentNo = $sofort->getTransactionId();
-                $order_object->write();
-            }
+            // Set the Payment No to our order data (accessable by
+            // onAfterIndex)
+            $order->PaymentID = $sofort->getTransactionId();
         } else {
             $actions->add(LiteralField::create(
                 'BackButton',
                 '<strong class="error">' . _t('Sofort.TransactionError','Error with transaction') . '</strong>'
             ));
         }
-
-        $this->extend('updateForm',$form);
         
-        $this->parent_controller->setOrder($order);
-        $this->parent_controller->setPaymentForm($form);
-
-        return array(
+        $this->customise(array(
             "Title"     => _t('Checkout.Summary',"Summary"),
-            "MetaTitle" => _t('Checkout.Summary',"Summary")
-        );
+            "MetaTitle" => _t('Checkout.Summary',"Summary"),
+            "Form"      => $form,
+            "Order"     => $order
+        ));
+        
+        $this->extend("onAfterIndex");
+        
+        return $this->renderWith(array(
+            "Sofort",
+            "Payment",
+            "Checkout",
+            "Page"
+        ));
     }
 
     /**
      * Process the callback data from the payment provider
      */
-    public function callback() {
+    public function callback($request) {
+        
+        $this->extend('onBeforeCallback');
+        
         $data = $this->request->postVars();
         $status = "error";
         $key = $this->payment_gateway->ConfigKey;
@@ -141,23 +144,25 @@ class SofortHandler extends PaymentHandler {
                     $status = "error";
             }
             
-            $return = array(
+            $payment_data = ArrayData::array_to_object(array(
+                "OrderID" => 0,
+                "PaymentID" => $notification->getTransactionId(),
                 "Status" => $status,
                 "GatewayData" => $data
-            );
+            ));
             
-            if(class_exists("Order")) {
-                $order = Order::get()
-                    ->filter("PaymentNo", $notification->getTransactionId())
-                    ->first();
-                    
-                $return["OrderID"] = $order->OrderNumber;
-            }
+            $this->setPaymentData($payment_data);
             
-            return $return;
+            $this->extend('onAfterCallback');
+            
+            return $this->renderWith(array(
+                "Sofort_callback",
+                "Checkout",
+                "Page"
+            ));
         }
         
-        return false;
+        return $this->httpError(500);
     }
 
 }
