@@ -146,6 +146,7 @@ class SofortHandler extends PaymentHandler {
             
             $payment_data = ArrayData::array_to_object(array(
                 "OrderID" => 0,
+                "PaymentProvider" => "Sofort",
                 "PaymentID" => $notification->getTransactionId(),
                 "Status" => $status,
                 "GatewayData" => $data
