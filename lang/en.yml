@@ -1,0 +1,9 @@
+en:
+  Checkout:
+    Back: Back
+    ConfirmPay: 'Confirm and Pay'
+    Summary: Summary
+  Sofort:
+    PLURALNAME: Soforts
+    SINGULARNAME: Sofort
+    TransactionError: 'Error with transaction'
