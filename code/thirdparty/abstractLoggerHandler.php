@@ -13,10 +13,13 @@
  *
  * @link http://www.sofort.com/ official website
  */
-abstract class AbstractLoggerHandler {
-	
-	public function __construct() {}
-	
-	
-	abstract function log($message, $log = 'log');
+abstract class AbstractLoggerHandler
+{
+    
+    public function __construct()
+    {
+    }
+    
+    
+    abstract public function log($message, $log = 'log');
 }
