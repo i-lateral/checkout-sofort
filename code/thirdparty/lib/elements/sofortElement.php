@@ -19,10 +19,11 @@
  * Implementation of a simple element
  *
  */
-abstract class SofortElement {
-	
-	/**
-	 * Render the element
-	 */
-	public abstract function render();
+abstract class SofortElement
+{
+    
+    /**
+     * Render the element
+     */
+    abstract public function render();
 }

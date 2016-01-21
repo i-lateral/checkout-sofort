@@ -13,4 +13,6 @@
  *
  * @link http://www.sofort.com/ official website
  */
-class XmlToArrayException extends Exception {}
+class XmlToArrayException extends Exception
+{
+}

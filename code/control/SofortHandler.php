@@ -1,9 +1,10 @@
 <?php
 
-class SofortHandler extends PaymentHandler {
+class SofortHandler extends PaymentHandler
+{
 
-    public function index($request) {
-        
+    public function index($request)
+    {
         $this->extend('onBeforeIndex');
         
         $site = SiteConfig::current_site_config();
@@ -12,7 +13,7 @@ class SofortHandler extends PaymentHandler {
         $key = $this->payment_gateway->ConfigKey;
         
         $sofort = new SofortMultipayPayment($key);
-        $sofort->setAmount(number_format($cart->TotalCost,2));
+        $sofort->setAmount(number_format($cart->TotalCost, 2));
         $sofort->setCurrencyCode(Checkout::config()->currency_code);
         
         $callback_url = Controller::join_links(
@@ -47,7 +48,7 @@ class SofortHandler extends PaymentHandler {
         
         $desc_string = "";
         
-        foreach($cart->getItems() as $item) {
+        foreach ($cart->getItems() as $item) {
             $desc_string .= $item->Title . ' x ' . $item->Quantity . ', ';
         }
 
@@ -60,18 +61,18 @@ class SofortHandler extends PaymentHandler {
 
         $actions = FieldList::create(LiteralField::create(
             'BackButton',
-            '<a href="' . $back_url . '" class="btn btn-red checkout-action-back">' . _t('Checkout.Back','Back') . '</a>'
+            '<a href="' . $back_url . '" class="btn btn-red checkout-action-back">' . _t('Checkout.Back', 'Back') . '</a>'
         ));
 
-        $form = Form::create($this,'Form',$fields,$actions)
+        $form = Form::create($this, 'Form', $fields, $actions)
             ->addExtraClass('forms')
             ->setFormMethod('GET');
             
-        if($sofort->getPaymentUrl()) {
+        if ($sofort->getPaymentUrl()) {
             $actions->add(
                 FormAction::create(
                     'Submit',
-                    _t('Checkout.ConfirmPay','Confirm and Pay')
+                    _t('Checkout.ConfirmPay', 'Confirm and Pay')
                 )->addExtraClass('btn')
                 ->addExtraClass('btn-green')
             );
@@ -84,13 +85,13 @@ class SofortHandler extends PaymentHandler {
         } else {
             $actions->add(LiteralField::create(
                 'BackButton',
-                '<strong class="error">' . _t('Sofort.TransactionError','Error with transaction') . '</strong>'
+                '<strong class="error">' . _t('Sofort.TransactionError', 'Error with transaction') . '</strong>'
             ));
         }
         
         $this->customise(array(
-            "Title"     => _t('Checkout.Summary',"Summary"),
-            "MetaTitle" => _t('Checkout.Summary',"Summary"),
+            "Title"     => _t('Checkout.Summary', "Summary"),
+            "MetaTitle" => _t('Checkout.Summary', "Summary"),
             "Form"      => $form,
             "Order"     => $order
         ));
@@ -108,8 +109,8 @@ class SofortHandler extends PaymentHandler {
     /**
      * Process the callback data from the payment provider
      */
-    public function callback($request) {
-        
+    public function callback($request)
+    {
         $this->extend('onBeforeCallback');
         
         $data = $this->request->postVars();
@@ -119,7 +120,7 @@ class SofortHandler extends PaymentHandler {
         $content = file_get_contents('php://input');
 
         // Check if CallBack data exists and install id matches the saved ID
-        if(isset($content)) {
+        if (isset($content)) {
             $notification = new SofortLibNotification();
             $transaction_id = $notification->getNotification($content);
 
@@ -127,7 +128,7 @@ class SofortHandler extends PaymentHandler {
             $sofort->addTransaction($transaction_id);
             $sofort->sendRequest();
             
-            switch($sofort->getStatus()) {
+            switch ($sofort->getStatus()) {
                 case 'received':
                     $status = "paid";
                     break;
@@ -165,5 +166,4 @@ class SofortHandler extends PaymentHandler {
         
         return $this->httpError(500);
     }
-
 }
