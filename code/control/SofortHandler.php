@@ -26,7 +26,8 @@ class SofortHandler extends PaymentHandler
         $success_url = Controller::join_links(
             Director::absoluteBaseURL(),
             Payment_Controller::config()->url_segment,
-            'complete'
+            'complete',
+            $order->OrderNumber
         );
 
         $error_url = Controller::join_links(
